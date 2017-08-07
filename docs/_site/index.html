@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width,maximum-scale=2">
+    <meta name="description" content="FreeSurfer Primer : Made for CFMI Training">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/assets/css/style.css?v=cfbf47959cb9cb6dfd62256f8d563c09ed1afd7f">
+
+    <title>FreeSurfer Primer</title>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="http://github.com/cfmilab/FreeSurfer-Primer">View on GitHub</a>
+          <h1 id="project_title">FreeSurfer Primer</h1>
+          <h2 id="project_tagline">Made for CFMI Training</h2>
+        </header>
+    </div>
+      <h3 class="masthead-title">
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/index">Home</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/freesurfer_installation">Install</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="introduction">Background</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/training_walkthrough">Training</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/recon-all-udh">Recon-all Quick Reference</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/clcs">Command Line Cheat Sheet</a></small>
+        
+      </h3>
+    <!-- MAIN CONTENT -->    
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2 id="3d-reconstruction-of-mr-brain-images">3D Reconstruction of MR Brain Images</h2>
+<p><a href="https://surfer.nmr.mgh.harvard.edu/">Freesurfer</a> (FS) is a powerful (and freely available!) software package developed at the Martinos Center for Biomedical Imaging for automatized analyses of brain anatomy.  A non-inclusive list of its capabilities includes:</p>
+
+<ul>
+  <li>
+    <p>Performing morphometric analysis of the brain <em>(i.e. cortical thickness, curvature, surface area, geodesic folding index, volume)</em></p>
+  </li>
+  <li>
+    <p>Creating study-specific anatomical templates</p>
+  </li>
+  <li>
+    <p>Optimal alignment of cortical folding patterns across individuals</p>
+  </li>
+  <li>
+    <p>Processing of functional imaging data using the FSFAST software suite</p>
+  </li>
+  <li>
+    <p>Segmenting and aligning individual brain volumes to an anatomical atlas</p>
+  </li>
+  <li>
+    <p>Rendering 3D models of the pial surface, white-matter and user-defined masks</p>
+  </li>
+</ul>
+
+<p>Although FS possesses remarkable capabilities that greatly reduce the effort involved in analyzing structural MRI data, there are crucial caveats the user must be aware of. This document is the first in a series of training guides intended to bring a novice user up to speed on using and trouble-shooting FS.</p>
+
+<p>In this guide, we will describe how to install and configure your system for FS and then walk you through the steps of reconstructing a brain scan from raw data and viewing the final results.  Part II in this series, “Trouble Shooting &amp; Manual Editing” will outline steps for artifact correction and manual intervention at various steps along the FS anatomical analysis workflow. Part III will cover statistical methods for morphometric analyses.</p>
+
+<p>The materials presented here are collected from miscellaneous notes taken from the <a href="https://surfer.nmr.mgh.harvard.edu/fswiki">FreeSurfer Wiki</a>, <a href="http://www.mail-archive.com/freesurfer@nmr.mgh.harvard.edu/">list-serv user postings</a>, <a href="https://www.zotero.org/freesurfer">published papers</a> and independent experimentation.  If a question comes up that is not addressed in this guide be sure to consult these resources first! If all else fails, ask questions!</p>
+        
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        
+        <p class="copyright">FreeSurfer Primer maintained by <a href="http://github.com/cfmilab">cfmilab</a></p>
+        
+            <section id="downloads">
+              <a class="zip_download_link" href="http://github.com/cfmilab/FreeSurfer-Primer/zipball/gh-pages">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="http://github.com/cfmilab/FreeSurfer-Primer/tarball/gh-pages">Download this project as a tar.gz file</a>
+            </section>        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+      <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', '', 'auto');
+        ga('send', 'pageview');
+      </script>
+  </body>
+</html>

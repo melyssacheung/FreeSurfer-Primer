@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width,maximum-scale=2">
+    <meta name="description" content="FreeSurfer Primer : Made for CFMI Training">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/assets/css/style.css?v=cfbf47959cb9cb6dfd62256f8d563c09ed1afd7f">
+
+    <title>FreeSurfer Primer</title>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="http://github.com/cfmilab/FreeSurfer-Primer">View on GitHub</a>
+          <h1 id="project_title">FreeSurfer Primer</h1>
+          <h2 id="project_tagline">Made for CFMI Training</h2>
+        </header>
+    </div>
+      <h3 class="masthead-title">
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/index">Home</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/freesurfer_installation">Install</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="introduction">Background</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/training_walkthrough">Training</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/recon-all-udh">Recon-all Quick Reference</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/clcs">Command Line Cheat Sheet</a></small>
+        
+      </h3>
+    <!-- MAIN CONTENT -->    
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2 id="command-line-cheat-sheet">Command Line Cheat Sheet</h2>
+
+<p><code class="highlighter-rouge">cd</code> – change directory.</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="nb">cd</span> ~ <span class="c">#move into home directory</span>
+<span class="nb">cd</span> . <span class="c">#stay in current directory</span>
+<span class="nb">cd</span> ../ <span class="c">#move up one directory in the tree</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">ls</code> – List directory contents.  Useful flags :</p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">-a</code> list all directory contents (including hidden files)</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">-l</code> long form, show extra information</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">-d</code> show only directories, useful for getting lists to iterate over</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">-G</code> output with colors</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">-S</code> sort files by size</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">-s</code> display number of file system blocks used by each file in units of 512 bytes</p>
+    <div class="language-bash highlighter-rouge"><pre class="highlight"><code>ls -alGS <span class="nv">$SUBJECTS_DIR</span>
+</code></pre>
+    </div>
+  </li>
+</ul>
+
+<p><code class="highlighter-rouge">mv</code> – Move or rename a file/directory.  Useful flags :</p>
+<ul>
+  <li><code class="highlighter-rouge">-f</code> overwrite files without asking permission</li>
+  <li><code class="highlighter-rouge">-i</code> return an error if attempting to overwrite existing file</li>
+  <li><code class="highlighter-rouge">-n</code> do not overwrite an existing file</li>
+  <li><code class="highlighter-rouge">-v</code> verbose output, shows files after they are moved
+    <div class="language-bash highlighter-rouge"><pre class="highlight"><code>mv -nv ~/Projects/ADS/data/Subjects/149959 ~/Projects/ADS/data/BadSubjects/149959
+</code></pre>
+    </div>
+  </li>
+</ul>
+
+<p><code class="highlighter-rouge">cp</code> – Copy contents of source file/directory to a target file/directory.  Useful flags :</p>
+<ul>
+  <li><code class="highlighter-rouge">-i</code> return an error if attempting to overwrite existing file</li>
+  <li><code class="highlighter-rouge">-n</code> do not overwrite an existing file</li>
+  <li><code class="highlighter-rouge">-v</code> verbose output, shows files after they are moved</li>
+  <li><code class="highlighter-rouge">-R</code> copy a source directory and all of it’s subdirectories.  If the source file ends in a /, the contents of the directory are copied rather than the directory itself.
+    <div class="language-bash highlighter-rouge"><pre class="highlight"><code>cp -ivR ~/Projects/ADS/data/Subjects/149959 ~/Projects/ADS/data/Subjects.BackUp/149959
+</code></pre>
+    </div>
+  </li>
+</ul>
+
+<p><code class="highlighter-rouge">rm</code> – Delete a file or directory.  Useful flags :</p>
+<ul>
+  <li><code class="highlighter-rouge">-f</code> overwrite files without asking permission</li>
+  <li><code class="highlighter-rouge">-i</code> return an error if attempting to overwrite existing file</li>
+  <li><code class="highlighter-rouge">-d</code> delete directories</li>
+  <li><code class="highlighter-rouge">-R/-r</code> delete directories and all of it’s sub directories (use this instead of -d)</li>
+  <li><code class="highlighter-rouge">-v</code> verbose output, shows files after they are moved
+    <div class="language-bash highlighter-rouge"><pre class="highlight"><code>rm -rv  ~/Projects/ADS/data/BadSubjects/149959
+</code></pre>
+    </div>
+  </li>
+</ul>
+
+<p><code class="highlighter-rouge">sudo</code> – Use before a command to over come permissions.  USE WITH CAUTION.  THIS WILL BREAK YOUR SYSTEM IF YOU ARE NOT CAREFUL TO TRIPLE-CHECK WHAT  YOU ARE MOVING/DELETING.</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>sudo rm -rv  ~/Projects/ADS/data/BadSubjects/149959
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">cat</code> – concatenate and print files.
+This is a very useful command for viewing the contents of any file.</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>cat ~/.bash_profile <span class="c">#print your .bash_profile to the screen</span>
+cat ~/file1 &gt; ~/file2 <span class="c">#overwrite file 2 with file 1</span>
+cat ~/file1 &gt;&gt; ~/file2 <span class="c">#append file 1 to file 2</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">echo</code> – print a variable or a string to the terminal. Useful flags :</p>
+
+<ul>
+  <li><code class="highlighter-rouge">-e</code> allows string formatting, i.e.) $\backslash$n gives a newline</li>
+</ul>
+
+<p>Simple usage:</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"Hello World"</span>
+</code></pre>
+</div>
+<p>Define a variable and print it.  Note that you have to use $ to refer to the variable after you define it.</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="nv">subjid</span><span class="o">=</span><span class="s2">"149959"</span>
+<span class="nb">echo</span> <span class="nv">$subjid</span>
+<span class="nb">echo</span> <span class="s2">"The subject ID is "</span> <span class="nv">$149959</span>
+</code></pre>
+</div>
+
+<p>Advanced usage.  Get a list of subjects by using \texttt{ls} and string formatting to print each subject name on a new line.  You must use parentheses around the output of a command with a leading $ to store it in a variable.  This is very useful if used properly.</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="nv">subjects</span><span class="o">=</span><span class="k">$(</span>ls -d ~/Projects/ADS/data/Subjects/<span class="k">*)</span>
+<span class="nb">echo</span> -e <span class="s2">"These are all the subjects in our study with data</span><span class="se">\n</span><span class="s2">"</span> 
+<span class="nb">echo</span> -e <span class="s2">"</span><span class="se">\n\t\%</span><span class="s2">s"</span> <span class="nv">$subjects</span>    
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">touch</code> – create a new file</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>touch .cool_script
+<span class="nv">newcommand</span><span class="o">=</span><span class="s2">"freeview -v </span><span class="nv">$SUBJECTS_DIR</span><span class="s2">/149959/mri/T1.mgz"</span>
+<span class="nb">echo</span> <span class="nv">$newcommand</span> &gt;&gt; .cool_scirpt
+. .cool_script
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">date</code> – get the date.
+You can use this to measure elapsed time of a script.</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="nv">begin</span><span class="o">=</span><span class="k">$(</span>date -u <span class="s2">"+%s"</span><span class="k">)</span>
+sleep 10 <span class="c">#sleep 10s, or run script here</span>
+<span class="nv">end</span><span class="o">=</span><span class="k">$(</span>date -u <span class="s2">"+%s"</span><span class="k">)</span>
+<span class="nv">elapsed</span><span class="o">=</span><span class="k">$((</span>END-START<span class="k">))</span> <span class="c">#double parenthesis to do arithmetic</span>
+<span class="nb">echo</span> <span class="s2">"</span><span class="k">$((</span><span class="nv">$elapsed</span> <span class="o">%</span><span class="m">60</span><span class="k">))</span><span class="s2"> seconds elapsed"</span>
+</code></pre>
+</div>
+        
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        
+        <p class="copyright">FreeSurfer Primer maintained by <a href="http://github.com/cfmilab">cfmilab</a></p>
+        
+            <section id="downloads">
+              <a class="zip_download_link" href="http://github.com/cfmilab/FreeSurfer-Primer/zipball/gh-pages">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="http://github.com/cfmilab/FreeSurfer-Primer/tarball/gh-pages">Download this project as a tar.gz file</a>
+            </section>        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+      <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', '', 'auto');
+        ga('send', 'pageview');
+      </script>
+  </body>
+</html>

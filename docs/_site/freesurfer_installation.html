@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width,maximum-scale=2">
+    <meta name="description" content="FreeSurfer Primer : Made for CFMI Training">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/assets/css/style.css?v=cfbf47959cb9cb6dfd62256f8d563c09ed1afd7f">
+
+    <title>FreeSurfer Primer</title>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="http://github.com/cfmilab/FreeSurfer-Primer">View on GitHub</a>
+          <h1 id="project_title">FreeSurfer Primer</h1>
+          <h2 id="project_tagline">Made for CFMI Training</h2>
+        </header>
+    </div>
+      <h3 class="masthead-title">
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/index">Home</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/freesurfer_installation">Install</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="introduction">Background</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/training_walkthrough">Training</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/recon-all-udh">Recon-all Quick Reference</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/clcs">Command Line Cheat Sheet</a></small>
+        
+      </h3>
+    <!-- MAIN CONTENT -->    
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2 id="installation--system-configuration">Installation &amp; System Configuration</h2>
+<p>The following installation instructions are tailored to OS X/Linux users with some familiarity of command line usage.  FS is not compatible with Windows. You will need to install a Linux Virtual Machine (VM) if you would like to run FS on a Windows machine.</p>
+
+<ol>
+  <li>
+    <p><a href="ftp://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/6.0/freesurfer-Darwin-lion-stable-pub-v5.3.0.dmg}{Download FreeSurfer">Download FreeSurfer</a></p>
+  </li>
+  <li>Add the FS start-up routine to a file that is read every time you log into a terminal session.  To do this open a terminal, move into your home directory and open <code class="highlighter-rouge">.bash_profile</code> in a text editing program such as sublime, emacs, vi or nano
+    <div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="nb">cd</span> ~
+emacs .bash_profile
+</code></pre>
+    </div>
+    <p>Edit your <code class="highlighter-rouge">.bash_profile</code> to include the commands below.  Make sure the <a href="https://en.wikipedia.org/wiki/Shebang_(Unix)">she-bang</a> (<code class="highlighter-rouge"><span class="c">#!/bin/bash</span></code>) is included at the top if you are creating the file from scratch.  This tells your terminal what program is used to run these commands.</p>
+    <div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="c"># FREESURFER SETUP</span>
+<span class="nb">export </span><span class="nv">FREESURFER_HOME</span><span class="o">=</span><span class="s2">"/Applications/freesurfer"</span>
+<span class="nb">source</span> <span class="nv">$FREESURFER_HOME</span>/SetUpFreeSurfer.sh
+<span class="nb">export </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span><span class="s2">"/Applications/freesurfer/subjects"</span>
+</code></pre>
+    </div>
+    <p>After verifying everything looks ok, type the <code class="highlighter-rouge">control</code> key then <code class="highlighter-rouge">x</code>, the <code class="highlighter-rouge">control</code> key again, then <code class="highlighter-rouge">c</code> to exit and save (for emacs). You will be prompted whether you want to save the file before exiting.  Type <code class="highlighter-rouge">y</code> then hit <code class="highlighter-rouge">enter</code> to do so. 
+The commands you added to your <code class="highlighter-rouge">.bash_profile</code> will put the FS tools at your disposal each time you open a terminal window.  Note that you may eventually want to change your <code class="highlighter-rouge">SUBJECTS_DIR</code> to point to the path of your own data directory:</p>
+    <div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="nv">SUBJECTS_DIR</span><span class="o">=</span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/FreeSurfer-Primer/mris"</span>
+<span class="c"># See what's inside SUBJECTS_DIR</span>
+</code></pre>
+    </div>
+    <p>The <code class="highlighter-rouge">ls</code> command prints out all of the subjects in your directory. Here we have set the FreeSurfer-Primer training data as the subjects directory and printed the contents below:</p>
+    <div class="language-bash highlighter-rouge"><pre class="highlight"><code>ls -l <span class="nv">$SUBJECTS_DIR</span>
+total 0
+drwxr-xr-x  6 cfmiuser  staff  204 sub-01
+drwxr-xr-x  6 cfmiuser  staff  204 sub-02
+drwxr-xr-x  6 cfmiuser  staff  204 sub-03
+drwxr-xr-x  6 cfmiuser  staff  204 sub-04
+drwxr-xr-x  5 cfmiuser  staff  170 sub-05
+drwxr-xr-x  6 cfmiuser  staff  204 sub-06
+drwxr-xr-x  6 cfmiuser  staff  204 sub-07
+drwxr-xr-x  6 cfmiuser  staff  204 sub-08
+drwxr-xr-x  6 cfmiuser  staff  204 sub-09
+drwxr-xr-x  6 cfmiuser  staff  204 sub-10
+</code></pre>
+    </div>
+    <p>Each subject has their own folder containing raw data that has been imported using <code class="highlighter-rouge">recon-all -s $subject -i $rawmri</code> (explained below).</p>
+  </li>
+  <li>
+    <p>Next open up the <code class="highlighter-rouge">.dmg</code> file you downloaded in step 1 and go through the installer. Then register on the FS website to get a <a href="https://surfer.nmr.mgh.harvard.edu/registration.html">license</a>.</p>
+  </li>
+  <li>When it is emailed to you, use <code class="highlighter-rouge">emacs</code> to create a license file then copy and paste in the key. You will need an administrator password for this since you must use super-user do:
+    <div class="language-bash highlighter-rouge"><pre class="highlight"><code>sudo emacs /Applications/freesurfer/license.txt
+Enter password:
+</code></pre>
+    </div>
+  </li>
+  <li>IMPORTANT: You must read (i.e., source) your <code class="highlighter-rouge">.bash_profile</code> so you can use FS in your current terminal session
+    <div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="nb">cd</span> <span class="nv">$HOME</span>
+<span class="nb">source</span> .bash_profile
+</code></pre>
+    </div>
+  </li>
+  <li>Run your first test of the installation by typing the following into a terminal
+    <div class="language-bash highlighter-rouge"><pre class="highlight"><code>freeview -v <span class="nv">$FREESURFER_HOME</span>/subjects/bert/mri/orig.mgz
+</code></pre>
+    </div>
+  </li>
+</ol>
+
+<h2 id="reconstruct-them-all">Reconstruct them all!</h2>
+
+<h3 id="quick-start-tutorial">Quick-Start Tutorial</h3>
+<p>The most attractive feature of FS is that it makes cortical surface reconstruction and subcortical segmentation for a single subject as easy as typing in a single command and coming back the next day to check your results.  To get started, you must set up your environment and import your imaging data.</p>
+
+<p>Set the environment by following step #2 above and sourcing your <code class="highlighter-rouge">.bash_profile</code>. Once the environment for FS has been set, you are ready to reconstruct your first 3D surfaces from a subject’s structural scan.</p>
+
+<h3 id="importing-data">Importing Data</h3>
+<p>To begin, you must first import the raw image files to your <code class="highlighter-rouge">SUBJECTS_DIR</code> by typing the following into a terminal:</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="nv">subject</span><span class="o">=</span><span class="s1">'sub-01'</span>
+<span class="nv">mridata</span><span class="o">=</span><span class="s1">'~/sub-01.01.nii'</span>
+<span class="nv">mridatatwo</span><span class="o">=</span><span class="s1">'~/sub-01.02.nii'</span>
+recon-all -s <span class="nv">$subject</span> -i <span class="nv">$mridata</span> -i <span class="nv">$mridata2</span>
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">-i</code> option converts structural scans in NIFTI format to <code class="highlighter-rouge">.mgh</code> and initializes the directory structure required for running the <code class="highlighter-rouge">recon-all</code> command.  Multiple input images can be specified if more than one run exists for a given subject.  These runs can be averaged together to generate cleaner images.</p>
+
+<h3 id="whats-in-each-subjects-directory">What’s In Each Subjects Directory?</h3>
+<p>After importing your data to the FreeSurfer directory structure, take a look in <code class="highlighter-rouge">SUBJECTS_DIR</code> and you should see a folder for the subject with the following directories:</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>ls <span class="nv">$SUBJECTS_DIR</span>/<span class="nv">$subject</span>
+label 		<span class="c"># surface labels (i.e, brodmann areas)</span>
+mri      	<span class="c"># volumetric files (.mgh/.mgz)</span>
+scripts     <span class="c"># status logs, commands, errors kept here</span>
+stat     	<span class="c"># data tables</span>
+surf  		<span class="c"># surface files (edges &amp; vertices)</span>
+tmp 		<span class="c"># keep control.dat here</span>
+touch 		<span class="c"># temporary files</span>
+trash 		<span class="c"># ovewritten files are moved here</span>
+</code></pre>
+</div>
+<p>Enter the following to view this subject’s imported structural scan.</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>freeview -v  <span class="nv">$SUBJECTS_DIR</span>/<span class="nv">$subject</span>/mri/orig/001.mgz
+</code></pre>
+</div>
+
+<p>Once it is confirmed that the subject has been successfully imported, we can begin the processing stream. Use the <code class="highlighter-rouge">-all</code>, <code class="highlighter-rouge">-3T</code> and <code class="highlighter-rouge">qcache</code> options to peform all steps, perform registration and intensity normalization assuming input image was collected on a 3 Tesla scanner and generate smoothed surfaces registered to FreeSurfer’s fsaverage space.</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>recon-all -s &lt;subjectname&gt; -all -3T -qcache
+</code></pre>
+</div>
+
+<p>The pre-processing can take up to 24 or as little as 3 hours depending on your machine.  Optimizing this work flow is absolutely crucial when performing a large study with many subjects.</p>
+
+<h3 id="speeding-up-run-times">Speeding up Run Times</h3>
+<h4 id="built-in-parallelization">Built-in Parallelization</h4>
+<p>As of FreeSurfer v6.0, parallelization has been built into various steps in the pipeline using the OpenMP toolkit. You can enable this by adding the <code class="highlighter-rouge">-parallel</code> flag to your recon-all command. If have newly installed FreeSurfer on macOS Sierra, you will need to make sure you have the most up-to-date version of the <code class="highlighter-rouge">gcc</code> compiler and associated FreeSurfer binaries.</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>brew install gcc <span class="c"># if not installed</span>
+brew upgrade gcc <span class="c"># if already installed</span>
+<span class="nb">source</span> <span class="nv">$FREESURFER_HOME</span>
+sudo -E fs_update
+Enter Password:
+
+</code></pre>
+</div>
+<h4 id="multicore-processing">Multicore Processing</h4>
+<p>If you have access to a multicore machine you may be interested in running many invocations  <code class="highlighter-rouge">recon-all</code> at the same time.  A quick and dirty shortcut for parallelizing <code class="highlighter-rouge">recon-all</code> is to run the command in as many terminal prompts as there are processors.  Unfortunately, since the quick and dirty method parallelizes at the highest level, system resources are not efficiently utilized.</p>
+
+<p>The <a href="https://www.gnu.org/software/parallel/">GNU parallel tool</a> is an excellent way for efficiently parallelizing any job on a Mac or Linux machine.  You can install this tool using the <a href="http://brew.sh">homebrew</a> package installer for OS X,</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>brew install parallel
+</code></pre>
+</div>
+
+<p>Once installed, a quick way to get started is to put all of your subjects’ anatomical scans in a single folder and typing the following command to import and run in a single call,</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="c"># move to a data directory containing raw files for each subject</span>
+<span class="nb">cd</span> ~/data
+<span class="c"># print list of files in data directory</span>
+ls
+total 0
+drwxr-xr-x  6 cfmiuser  staff  204 sub-01.nii.gz
+drwxr-xr-x  6 cfmiuser  staff  204 sub-02.nii.gz
+drwxr-xr-x  6 cfmiuser  staff  204 sub-03.nii.gz
+drwxr-xr-x  6 cfmiuser  staff  204 sub-04.nii.gz
+drwxr-xr-x  5 cfmiuser  staff  170 sub-05.nii.gz
+drwxr-xr-x  6 cfmiuser  staff  204 sub-06.nii.gz
+drwxr-xr-x  6 cfmiuser  staff  204 sub-07.nii.gz
+drwxr-xr-x  6 cfmiuser  staff  204 sub-08.nii.gz
+drwxr-xr-x  6 cfmiuser  staff  204 sub-09.nii.gz
+drwxr-xr-x  6 cfmiuser  staff  204 sub-10.nii.gz
+<span class="c"># now import and run in parallel</span>
+find -f <span class="k">*</span>.nii.gz | parallel --bar -k --link <span class="se">\ </span><span class="c">#line break</span>
+recon-all -s <span class="o">{</span>.<span class="o">}</span> -i <span class="o">{}</span> -all -3T -qcache -parallel
+</code></pre>
+</div>
+<p>The <code class="highlighter-rouge">--bar</code> option includes a progress bar with estimated time to completion. The <code class="highlighter-rouge">-k</code> and <code class="highlighter-rouge">--link</code> options tell parallel to execute recon in the order files are piped (|) into the standard input for the program. We use a <code class="highlighter-rouge"><span class="p">{}</span></code> to refer to each element in the list piped from the <code class="highlighter-rouge">find -f *.nii.gz</code> command. The <code class="highlighter-rouge"><span class="p">{</span><span class="err">.</span><span class="p">}</span></code> removes the extension <code class="highlighter-rouge">.nii.gz</code> from each item in the list files generated with the find command.</p>
+
+<h4 id="high-performance-computing-on-a-grid-engine-system">High Performance Computing on a Grid Engine System</h4>
+<p>..coming soon..</p>
+        
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        
+        <p class="copyright">FreeSurfer Primer maintained by <a href="http://github.com/cfmilab">cfmilab</a></p>
+        
+            <section id="downloads">
+              <a class="zip_download_link" href="http://github.com/cfmilab/FreeSurfer-Primer/zipball/gh-pages">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="http://github.com/cfmilab/FreeSurfer-Primer/tarball/gh-pages">Download this project as a tar.gz file</a>
+            </section>        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+      <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', '', 'auto');
+        ga('send', 'pageview');
+      </script>
+  </body>
+</html>

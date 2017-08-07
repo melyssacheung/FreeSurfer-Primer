@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width,maximum-scale=2">
+    <meta name="description" content="FreeSurfer Primer : Made for CFMI Training">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/assets/css/style.css?v=cfbf47959cb9cb6dfd62256f8d563c09ed1afd7f">
+
+    <title>FreeSurfer Primer</title>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="http://github.com/cfmilab/FreeSurfer-Primer">View on GitHub</a>
+          <h1 id="project_title">FreeSurfer Primer</h1>
+          <h2 id="project_tagline">Made for CFMI Training</h2>
+        </header>
+    </div>
+      <h3 class="masthead-title">
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/index">Home</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/freesurfer_installation">Install</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="introduction">Background</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/training_walkthrough">Training</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/recon-all-udh">Recon-all Quick Reference</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/clcs">Command Line Cheat Sheet</a></small>
+        
+      </h3>
+    <!-- MAIN CONTENT -->    
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2 id="background">Background</h2>
+<h3 id="cortical-surface-reconstruction">Cortical Surface Reconstruction</h3>
+<p>FS initially emerged from efforts to constrain the <a href="http://www.scholarpedia.org/article/Source_localization">inverse problem for EEG/MEG source localization</a> using anatomically accurate cortical surface models (\cite{dale_improved_1993}).  Dale &amp; Sereno’s major innovation was to use the gray/white boundary instead of the pial surface to reconstruct the cortex – effectively curtailing the challenge of conforming a continuous spherical surface to a highly irregular and non-continuous cortical gyri.  Unfortunately, these early attempts did not produce accurate surface models and required extensive user intervention to correct topological defects. The accuracy of surface deformation techniques is constrained by three considerations:</p>
+
+<p><strong>Iso-Intensity Surfaces</strong> – the assumption that the MRI intensity of gray/white and pial surfaces are constant. However, this assumption is not accurate. Cortical tissue varies in microanatomy and thus the signal intensity is quite variable across cortex.  For example, myelin-rich regions will appear much brighter than myelin-poor regions.</p>
+
+<p><strong>Topological Constraints</strong> – surfaces must be constrained to not self intersect.  This problem is made exceptionally difficult since the cortex is tightly packed making the demarcation between adjacent sulcal banks a hard computational problem for planar Eulerian methods.</p>
+
+<p><strong>Curvature minimization</strong> – smooth surfaces are generated through curvature minimization, however cortex contains many regions with high curvature.</p>
+
+<p>Fischl &amp; Dale addressed nonuniform iso-intensity by adaptively determining MR intensity thresholds for a boundary at each point in an image. Topological constraints can be ignored by avoiding curvature minimization and using a second-order polynomial patch instead of a plane surface. Limitations of curvature minimization algorithms have been avoided via application of fast triangle-triangle intersection borrowed from the computer graphics literature (\cite{fischl_measuring_2000}).</p>
+
+<p>These workarounds have been proven to produce accurate and sensitive (up to 0.25 mm) measurements of cortical thickness that withstood considerable variation in sequence parameters, acquisition artifacts and tissue variability \cite{fischl_automated_2001}.  Many groups have now validated Fischl &amp; Dale’s reconstruction algorithm with histological and manual measures across many scanner platforms, in the presence of subject motion, different acquisition parameters, correlations with behavioral measures and analysis types \cite{dickerson_detection_2008,  han_reliability_2006, rosas_regional_2002, ReutEtal14, vonEconomo}.</p>
+
+<h3 id="whole-brain-segmentation">Whole Brain Segmentation</h3>
+<p>Once the cortical surface reconstruction approach had been tackled, Fischl et al. turned their attention to whole brain segmentation. The major difficulty in performing algorithmic volumetric segmentation of the gray matter is the high variability of image intensity across brain structures. A Bayesian approach was adopted to solve this problem using a different model to compute the image likelihood at each position in space. A non-stationary, anistrophic Markov Random Field model was used to define the prior on structure identity given relative spatial location to other macro-structures. The technique was validated using a training set of manually labeled images, achieving comparable performance to extensively trained personnel and exhibited excellent performance with pathological samples \cite{fischl_whole_2002, fischl_sequence-independent_2004}.</p>
+
+<h3 id="other-contributions">Other Contributions</h3>
+<p>Many other groups have contributed improvements and additional modules to the FS software suite:</p>
+
+<ul>
+  <li>
+    <p>Tractography \cite{yendiki_automated_2011}</p>
+  </li>
+  <li>
+    <p>Alignment of Cortical Folding Patterns and Subcortical/Ventricular Structures
+\cite{postelnicu_combined_2009}</p>
+  </li>
+  <li>
+    <p>Analysis of Cortical Curvature Development \cite{pienaar_methodology_2008}</p>
+  </li>
+  <li>
+    <p>Skull Stripping \cite{segonne_hybrid_2004}</p>
+  </li>
+  <li>
+    <p>Statistical Models for Longitudinal Analyses \cite{reuter_within-subject_2012}</p>
+  </li>
+  <li>
+    <p>Gyral Based Cortical Parcellation \cite{desikan_automated_2006}</p>
+  </li>
+  <li>
+    <p>Insensitivity to Pulse Sequences \cite{han_reliability_2006}</p>
+  </li>
+  <li>
+    <p>High Resolution Segmentation of Hippocampal Subfields \cite{van_leemput_automated_2009}</p>
+  </li>
+  <li>
+    <p>Probabilistic Label Segmentation \cite{sabuncu_generative_2010}</p>
+  </li>
+</ul>
+
+<p>Thanks to the efforts of those that validated and built-upon the software, cognitive neuroscientists and research clinicians can accurately measure a variety of morphometrics in relation to brain function. Now that you are stoked after perusing this exciting scientific historical backdrop, continue on to learn how to install FS and run your first cortical reconstruction.</p>
+        
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        
+        <p class="copyright">FreeSurfer Primer maintained by <a href="http://github.com/cfmilab">cfmilab</a></p>
+        
+            <section id="downloads">
+              <a class="zip_download_link" href="http://github.com/cfmilab/FreeSurfer-Primer/zipball/gh-pages">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="http://github.com/cfmilab/FreeSurfer-Primer/tarball/gh-pages">Download this project as a tar.gz file</a>
+            </section>        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+      <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', '', 'auto');
+        ga('send', 'pageview');
+      </script>
+  </body>
+</html>

@@ -1,1 +1,21 @@
 theme: jekyll-theme-slate
+title: "FreeSurfer Primer"
+name: "CFMI Lab|FreeSurfer Primer"
+description: "Made for CFMI Training"
+url: "https://cfmilab.github.io/FreeSurfer-Primer"
+repository: "cfmilab/FreeSurfer-Primer"
+teaser: ""
+downloads: true
+
+gems:
+  - jekyll-paginate
+
+# List of links in the navigation bar
+pages_list:
+  Home: '/index'
+  Install: '/freesurfer_installation'
+  Background: 'introduction'
+  Training: '/training_walkthrough'
+  Recon-all Quick Reference: '/recon-all-udh'
+  Command Line Cheat Sheet: '/clcs'
+

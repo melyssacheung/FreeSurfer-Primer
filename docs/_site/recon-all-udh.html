@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width,maximum-scale=2">
+    <meta name="description" content="FreeSurfer Primer : Made for CFMI Training">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/assets/css/style.css?v=cfbf47959cb9cb6dfd62256f8d563c09ed1afd7f">
+
+    <title>FreeSurfer Primer</title>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="http://github.com/cfmilab/FreeSurfer-Primer">View on GitHub</a>
+          <h1 id="project_title">FreeSurfer Primer</h1>
+          <h2 id="project_tagline">Made for CFMI Training</h2>
+        </header>
+    </div>
+      <h3 class="masthead-title">
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/index">Home</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/freesurfer_installation">Install</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="introduction">Background</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/training_walkthrough">Training</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/recon-all-udh">Recon-all Quick Reference</a></small>
+        
+          &nbsp;&nbsp;&nbsp;
+          <small><a href="/clcs">Command Line Cheat Sheet</a></small>
+        
+      </h3>
+    <!-- MAIN CONTENT -->    
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2 id="recon-all-under-the-hood">Recon-all: Under the Hood</h2>
+
+<p>While you are running your first subject you may notice that the terminal will quickly begin filling up with text describing the processing status, any errors that may have been encountered and details regarding individuals steps taken.  You can get more information about each of these steps and the usage of recon-all by opening a new terminal and typing:</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>recon-all -help
+</code></pre>
+</div>
+<p>The help command also provides you with information regarding optional arguments you can flag each <code class="highlighter-rouge">recon-all</code> call with.  Of particular importance are the autorecon flags:</p>
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>-autorecon1  :  process stages 1-5
+-autorecon2  :  process stages 6-23
+-autorecon3  :  process stages 24-34
+</code></pre>
+</div>
+
+<p>Each of these flags can take additional options for algorithm parameters or to only run a subset of the processing stages. The individual stages and some optional parameters of the FS pre-processing pipeline are summarized below.</p>
+
+<h3 id="recon-all-consists-of-34-processing-stages">Recon-all consists of 34 processing stages</h3>
+<h4 id="autorecon1">Autorecon1</h4>
+
+<p><strong>Motion Correction and Conform</strong> – Multiple scans from the same subject are averaged together to minimize motion artifacts.  The input are the volumes found in file(s) <code class="highlighter-rouge">mri/orig/XXX.mgz</code>. The output will be the volume <code class="highlighter-rouge">mri/orig.mgz</code>. If no runs are found, then it looks for a volume in <code class="highlighter-rouge">mri/orig</code>. If that volume is there, then it is used in subsequent processes as if it was the motion corrected volume. If no volume is found, then the process exits with errors.</p>
+
+<p><strong>NU (Non-Uniform intensity normalization)</strong> – Non-parametric Non-uniform intensity Normalization (N3), corrects for intensity non-uniformity in MR data, making relatively few assumptions about the data. This runs the MINC tool <code class="highlighter-rouge">nu_correct</code>. By default, four iterations of <code class="highlighter-rouge">nu_correct</code> are run. The flag <code class="highlighter-rouge">-nuiterations</code> specification of some other number of iterations.</p>
+
+<p><strong>Talairach transform computation</strong> – The affine matrix required to register the scan to the MNI305 space is computed at this step.  You can/should check the talairach registration using <code class="highlighter-rouge">tkregister2 --s subjid --fstal</code>. <code class="highlighter-rouge">tkregister2</code> allows you to compare the original volume against the talairach volume resampled into the original space. Run <code class="highlighter-rouge">tkregister2 --help</code> for more information. This step creates the files <code class="highlighter-rouge">mri/transform/talairach.auto.xfm</code> and <code class="highlighter-rouge">talairach.xfm</code>.</p>
+
+<p><strong>Intensity Normalization</strong>  – Renormalization of intensity. Performs intensity normalization of the <code class="highlighter-rouge">orig</code> volume and places the result in <code class="highlighter-rouge">mri/T1.mgz</code>. Attempts to correct for fluctuations in intensity that would otherwise make intensity-based segmentation much more difficult. <em>Intensities for all voxels are scaled so that the mean intensity of the white matter is 110.</em> If there are problems with the normalization, users can add control points.</p>
+
+<p><strong>Skull Strip</strong> – The skull and brainstem are removed from <code class="highlighter-rouge">mri/T1.mgz</code> and stores the result in <code class="highlighter-rouge">mri/brainmask.auto.mgz</code> and <code class="highlighter-rouge">mri/brainmask.mgz</code>. Runs the <code class="highlighter-rouge">mri_watershed</code> program. <em>If the strip fails, users can specify seed points</em> (<code class="highlighter-rouge">-wsseed</code>) <em>or change the threshold</em>(<code class="highlighter-rouge">-wsthresh</code>, <code class="highlighter-rouge">-wsmore</code>, <code class="highlighter-rouge">-wsless</code>). The <code class="highlighter-rouge">-autorecon1</code> stage ends here.</p>
+
+<h4 id="autorecon2">Autorecon2</h4>
+<p><strong>EM Register (linear volumetric registration)</strong> – Computes transform to align the <code class="highlighter-rouge">mri/nu.mgz</code> volume to the default GCA atlas found in <code class="highlighter-rouge">$FREESURFER_HOME/average</code> (see <code class="highlighter-rouge">-gca</code> flag for more info). Creates the file <code class="highlighter-rouge">mri/transforms/talairach.lta</code>. The <code class="highlighter-rouge">-autorecon2</code> stage starts here.</p>
+
+<p><strong>CA Intensity Normalization</strong> – Further normalization, based on GCA model. Creates <code class="highlighter-rouge">mri/norm.mgz</code>.</p>
+
+<p><strong>CA Non-linear Volumetric Registration</strong> – Computes a nonlinear transform to align with GCA atlas. Creates the file <code class="highlighter-rouge">mri/transform/talairach.m3z</code>.</p>
+
+<p><strong>Remove Neck</strong> – The neck region is removed from the NU-corrected volume <code class="highlighter-rouge">mri/nu.mgz</code>. Makes use of transform computed from prior CA Register stage. Creates the file <code class="highlighter-rouge">mri/nu_noneck.mgz</code>.</p>
+
+<p><strong>EM Register, with skull</strong> – Computes transform to align volume <code class="highlighter-rouge">mri/nu_noneck.mgz</code> with GCA volume possessing the skull. Creates <code class="highlighter-rouge">mri/transforms/talairach_with_skull.lta</code>.</p>
+
+<p><strong>CA Label (Aseg: Volumetric Labeling) and Statistics</strong> – Labels subcortical structures, based in GCA model. Creates the files <code class="highlighter-rouge">mri/aseg.auto.mgz</code> and <code class="highlighter-rouge">mri/aseg.mgz</code>.</p>
+
+<p><strong>Intensity Normalization 2</strong> (start here for control points) – Performs a second (major) intensity correction using only the brain volume as the input (so that it has to be done after the skull strip). Intensity normalization works better when the skull has been removed. Creates a new <code class="highlighter-rouge">brain.mgz volume</code>. The <code class="highlighter-rouge">-autorecon2-cp</code> stage begins here. If <code class="highlighter-rouge">-noaseg</code> flag is used, then <code class="highlighter-rouge">aseg.mgz</code> is not used by <code class="highlighter-rouge">mri_normalize</code>.</p>
+
+<p><strong>White matter segmentation</strong> – Attempts to separate white matter from everything else. The input is <code class="highlighter-rouge">mri/brain.mgz</code>, and the output is <code class="highlighter-rouge">mri/wm.mgz</code>. Uses intensity, neighborhood, and smoothness constraints. <em>This is the volume that is edited when manually fixing defects</em>. Calls <code class="highlighter-rouge">mri_segment, mri_edit_wm_with_aseg, and mri_pretess</code>. To keep previous edits, run with <code class="highlighter-rouge">-keepwmedits</code>. If <code class="highlighter-rouge">-noaseg</code> is used, them <code class="highlighter-rouge">mri_edit_wm_aseg</code> is skipped.</p>
+
+<p><strong>Edit White Matter with Aseg</strong> – Any user edits to the segmentation is processed here.</p>
+
+<p><strong>Fill/Cut Into Brainstem, and Hemispheres</strong> –  This creates the subcortical mass from which the <code class="highlighter-rouge">orig</code> surface is created. The mid brain is cut from the cerebrum, and the hemispheres are cut from each other. The left hemisphere is binarized to 255. The right hemisphere is binarized to 127. The input is <code class="highlighter-rouge">mri/wm.mgz</code> and the output is <code class="highlighter-rouge">mri/filled.mgz</code>. Calls <code class="highlighter-rouge">mri_fill</code>. If the cut fails, then seed points can be supplied (see <code class="highlighter-rouge">-cc-crs</code>, <code class="highlighter-rouge">-pons-crs</code>, <code class="highlighter-rouge">-lh-crs</code>, <code class="highlighter-rouge">-rh-crs</code>). The actual points used for the cutting planes in the corpus callosum and pons can be found in <code class="highlighter-rouge">scripts/ponscc.cut.log</code>. The stage <code class="highlighter-rouge">-autorecon2-wm</code> begins here. This is the last stage of volumetric processing. If <code class="highlighter-rouge">-noaseg</code> is used, then <code class="highlighter-rouge">aseg.mgz</code> is not used by <code class="highlighter-rouge">mri_fill</code>.</p>
+
+<p><strong>Tessellation</strong> (begins per-hemisphere operations) – This is the step where the <code class="highlighter-rouge">orig</code> surface (ie, <code class="highlighter-rouge">surf/?h.orig.nofix</code>) is created. The surface is created by covering the filled hemisphere with triangles. Runs <code class="highlighter-rouge">mri_tessellate</code>. The places where the points of the triangles meet are called vertices. Creates the file <code class="highlighter-rouge">surf/?h.orig.nofix</code>. <em>Note: the topology fixer will create the surface ?h.orig.</em></p>
+
+<p><strong>Smooth 1</strong> – After tesselation, the <code class="highlighter-rouge">orig</code> surface is very jagged because each triangle is on the edge of a voxel face and so are at right angles to each other. The vertex positions are adjusted slightly here to reduce the angle. This is only necessary for the inflation processes. Creates <code class="highlighter-rouge">surf/?h.smoothwm(.nofix)</code>. Calls <code class="highlighter-rouge">mris_smooth</code>. Smooth1 is the step just after tessellation, and smooth 2 is the step just after topology fixing.</p>
+
+<p><strong>Inflate 1</strong> – Inflation of the <code class="highlighter-rouge">surf/?h.smoothwm(.nofix)</code> surface to <code class="highlighter-rouge">create surf/?h.inflated</code>. The inflation attempts to minimize metric distortion so that distances and areas are preserved (ie, the surface is not stretched). In this sense, it is like inflating a paper bag and not a balloon. Inflate 1 is the step just after tessellation, and inflate2 is the step just after topology fixing. Calls <code class="highlighter-rouge">mris_inflate</code>. Creates <code class="highlighter-rouge">?h.inflated,</code>?h.sulc<code class="highlighter-rouge">,</code>?h.curv<code class="highlighter-rouge">, and</code>?h.area```.</p>
+
+<p><strong>QSphere</strong> – This is the initial step of automatic topology fixing. It is a quasi-homeomorphic spherical transformation of the inflated surface designed to localize topological defects for the subsequent automatic topology fixer. Calls <code class="highlighter-rouge">mris_sphere</code>. Creates <code class="highlighter-rouge">surf/?h.qsphere.nofix</code>.</p>
+
+<p><strong>Automatic Topology Fixer</strong> – Finds topological defects (ie, holes in a filled hemisphere) using <code class="highlighter-rouge">surf/?h.qsphere.nofix</code>, and changes the original surface (<code class="highlighter-rouge">surf/?h.orig.nofix</code>) to remove the defects. Changes the number of vertices. All the defects will be removed, but the user should check the <code class="highlighter-rouge">orig</code> surface in the volume to make sure that it looks appropriate. Calls <code class="highlighter-rouge">mris_fix_topology</code>. Creates <code class="highlighter-rouge">surf/?h.orig</code> (by iteratively fixing <code class="highlighter-rouge">surf/?h.orig.nofix</code>).</p>
+
+<p><strong>White Matter Surfaces</strong> Creates the <code class="highlighter-rouge">?h.white surface</code>. The white surface is created by “nudging” the <code class="highlighter-rouge">orig</code> surface so that it closely follows the white-gray intensity gradient as found in the T1 volume.</p>
+
+<p><strong>Smooth 2</strong> – Smooth the surfaces again (repeat Smooth 1).</p>
+
+<p><strong>Cortical Ribbon Mask</strong> – Creates binary volume masks of the cortical ribbon, ie, each voxel is either a 1 or 0 depending upon whether it falls in the ribbon or not. Saved as <code class="highlighter-rouge">?h.ribbon.mgz</code>. Uses mgz regardless of whether the <code class="highlighter-rouge">-mgz</code> option is used. The <code class="highlighter-rouge">-autorecon2</code> stage ends here.</p>
+
+<h4 id="autorecon3">Autorecon3</h4>
+<p><strong>Inflate 2</strong> – Inflates the <code class="highlighter-rouge">orig</code> surface into a sphere while minimizing metric distortion. This step is necessary in order to register the surface to the spherical atlas. (also known as the spherical morph). Calls <code class="highlighter-rouge">mris_sphere</code>. Creates <code class="highlighter-rouge">surf/?h.sphere</code>. The -autorecon3 stage begins here.</p>
+
+<p><strong>Spherical Registration</strong> – Registers the <code class="highlighter-rouge">orig</code> surface to the spherical atlas through <code class="highlighter-rouge">surf/?h.sphere</code>. The surfaces are first coarsely registered by aligning the large scale folding patterns found in <code class="highlighter-rouge">?h.sulc</code> and then fine tuned using the small-scale patterns as in <code class="highlighter-rouge">?h.curv</code>. Calls <code class="highlighter-rouge">mris_register</code>. Creates <code class="highlighter-rouge">surf/?h.sphere.reg</code>.</p>
+
+<p><strong>Spherical Registration, Contralateral hemisphere</strong> – Same as ipsilateral but registers to the contralateral atlas. Creates lh.rh.sphere.reg and rh.lh.sphere.reg.</p>
+
+<p><strong>Spherical Mapping</strong> – Maps sphere to atlas labels.</p>
+
+<p><strong>Map Average Curvature to Subject</strong> – Resamples the average curvature from the atlas to that of the subject. Allows the user to display activity on the surface of an individual with the folding pattern (ie, anatomy) of a group. Calls <code class="highlighter-rouge">mrisp_paint</code>. Creates <code class="highlighter-rouge">surf/?h.avg_curv</code>.</p>
+
+<p><strong>Cortical Parcellation</strong> (Labeling) – Assigns a neuroanatomical label to each location on the cortical surface. Incorporates both geometric information derived from the cortical model (sulcus and curvature), and neuroanatomical convention. Calls <code class="highlighter-rouge">mris_ca_label . -cortparc</code> creates <code class="highlighter-rouge">label/?h.aparc.annot</code> and <code class="highlighter-rouge">-cortparc2</code> creates <code class="highlighter-rouge">/label/?h.aparc.a2005s.annot</code>.</p>
+
+<p><strong>Cortical Parcellation Statistics</strong> – Runs <code class="highlighter-rouge">mris_anatomical_stats</code> to create a summary table of cortical parcellation statistics for each structure, including 1. structure name 2. number of vertices 3. total surface area (mm2) 4. total gray matter volume (mm3) 5. average cortical thickness (mm) 6. standard error of cortical thicknessr (mm) 7. integrated rectified mean curvature 8. integrated rectified Gaussian curvature 9. folding index 10. intrinsic curvature index. For <code class="highlighter-rouge">-parcstats</code>, the file is saved in <code class="highlighter-rouge">stats/?h.aparc.stats</code>. For <code class="highlighter-rouge">-parcstats2</code>, the file is saved in <code class="highlighter-rouge">stats/?h.aparc.a2005s.stats</code>.</p>
+
+<p><strong>Pial Surfs</strong> Creates the thickness file (<code class="highlighter-rouge">?h.thickness</code>) and curvature file (<code class="highlighter-rouge">?h.curv</code>). The pial surface is created by expanding the white surface so that it closely follows the gray-CSF intensity gradient as found in the T1 volume. Calls <code class="highlighter-rouge">mris_make_surfaces</code>.</p>
+
+<p><strong>WM/GM Contrast</strong> – ? No information available on this step</p>
+
+<p><strong>Cortical Parcellation mapped to ASeg</strong> – Maps the cortical parcellation to the subcortical segmentation.</p>
+
+<p><strong>Brodmann and ex vivo EC labels</strong> – Generate labels to map Brodmann areas and Entorhinal cortex.</p>
+        
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        
+        <p class="copyright">FreeSurfer Primer maintained by <a href="http://github.com/cfmilab">cfmilab</a></p>
+        
+            <section id="downloads">
+              <a class="zip_download_link" href="http://github.com/cfmilab/FreeSurfer-Primer/zipball/gh-pages">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="http://github.com/cfmilab/FreeSurfer-Primer/tarball/gh-pages">Download this project as a tar.gz file</a>
+            </section>        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+      <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', '', 'auto');
+        ga('send', 'pageview');
+      </script>
+  </body>
+</html>

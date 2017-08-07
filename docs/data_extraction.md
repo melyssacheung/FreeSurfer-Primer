@@ -1,0 +1,3 @@
+### Importing Raw Data At the CFMI, the original ```.IMA``` DICOM files are usually downloaded or copied from the raw data directory on the server and converted to nifti (```.nii```) or analyze (```.img/.hdr```) format.  A program for performing automatic conversion and data duplication can be found in the [dicom-tools repo](https://github.com/cfmilab/dicom-tools).
+
+This package contains the ```fetch-dicom``` program, a wrapper around the ```dcm2niix``` conversion software. Software such as [MRICONVERT](http://neuro.debian.net/pkgs/mriconvert.html) or [MRICRON](http://www.mccauslandcenter.sc.edu/mricro/mricron) may also be used for this purpose.  An example call of ```fetch-dicom``` appears below,
