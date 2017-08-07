@@ -12,10 +12,10 @@ gems:
 
 # List of links in the navigation bar
 pages_list:
-  Home: '/index'
-  Install: '/freesurfer_installation'
+  Home: 'index'
+  Install: 'freesurfer_installation'
   Background: 'introduction'
-  Training: '/training_walkthrough'
-  Recon-all Quick Reference: '/recon-all-udh'
-  Command Line Cheat Sheet: '/clcs'
+  Training: 'training_walkthrough'
+  Recon-all Quick Reference: 'recon-all-udh'
+  Command Line Cheat Sheet: 'clcs'
 
